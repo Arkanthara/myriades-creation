@@ -8,6 +8,7 @@ import '../styles/global.css';
 import { site, siteUrl, theme, customOrder } from '../lib/config';
 import Icon from '../components/Icon.astro';
 import GalleryDialog from '../components/GalleryDialog.astro';
+import Brand from '../components/Brand.astro';
 interface Props {
   title?: string;
   description?: string;
@@ -80,21 +81,7 @@ const structured = {
     </a>
     {site.demoMode && <div class="demo-notice">{site.demoNotice}</div>}
     <header class="site-header container">
-      <a href="/" class="brand">
-        {site.logo.src ? (
-          <img class="brand-logo" src={site.logo.src} alt={site.logo.alt} width="200" height="72" />
-        ) : (
-          <>
-            <span class="brand-name">
-              {site.name}
-              <span aria-hidden="true" class="brand-star">
-                ✧
-              </span>
-            </span>
-            <span class="brand-tagline">{site.logo.tagline}</span>
-          </>
-        )}
-      </a>
+      <Brand />
       <nav class="desktop-nav" aria-label={site.ui.menu}>
         {nav.map((item) => (
           <a href={item.href} aria-current={active(item.href) ? 'page' : undefined}>
@@ -127,10 +114,7 @@ const structured = {
     <footer class="site-footer container">
       <div class="footer-main">
         <div>
-          <a href="/" class="footer-brand">
-            {site.name}
-            <span aria-hidden="true"> ✧</span>
-          </a>
+          <Brand footer />
           <p>{site.footer.text}</p>
         </div>
         <div class="footer-links">

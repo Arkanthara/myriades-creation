@@ -26,15 +26,17 @@ const related = (await creations(entry.collection))
     </a>
     <div class="detail-heading">
       <div>
-        <p class="eyebrow">
-          {data.category}
-          {data.demo && ` · ${site.ui.demoBadge}`}
-        </p>
+        {(data.category || data.demo) && (
+          <p class="eyebrow">
+            {data.category}
+            {data.demo && `${data.category ? ' · ' : ''}${site.ui.demoBadge}`}
+          </p>
+        )}
         <h1>{data.title}</h1>
-        <p>{data.description}</p>
+        {data.description && <p>{data.description}</p>}
       </div>
       <span class="detail-flower" aria-hidden="true">
-        ✧
+        <Icon name="butterfly" size={80} />
       </span>
     </div>
     <div class="detail-layout">
@@ -47,13 +49,13 @@ const related = (await creations(entry.collection))
               data-gallery-open
               data-gallery-group="creation"
               data-src={image.src}
-              data-alt={image.alt}
+              data-alt={image.alt ?? data.title}
               data-caption={image.caption || data.title}
-              aria-label={`${site.ui.enlarge} : ${image.alt}`}
+              aria-label={`${site.ui.enlarge} : ${image.alt || data.title}`}
             >
               <img
                 src={image.src}
-                alt={image.alt}
+                alt={image.alt ?? data.title}
                 width={image.width}
                 height={image.height}
                 loading={index === 0 ? 'eager' : 'lazy'}
@@ -68,19 +70,29 @@ const related = (await creations(entry.collection))
         ))}
       </section>
       <aside class="creation-story">
-        <p class="eyebrow">{site.ui.aboutCreation}</p>
-        <div class="prose">
-          <Content />
-        </div>
+        {entry.body?.trim() && <p class="eyebrow">{site.ui.aboutCreation}</p>}
+        {entry.body?.trim() && (
+          <div class="prose">
+            <Content />
+          </div>
+        )}
         <dl class="creation-facts">
           <div>
             <dt>{site.ui.technique}</dt>
             <dd>{data.technique}</dd>
           </div>
-          <div>
-            <dt>{site.ui.year}</dt>
-            <dd>{data.date.getFullYear()}</dd>
-          </div>
+          {data.cut && (
+            <div>
+              <dt>{site.ui.cut}</dt>
+              <dd>{data.cut}</dd>
+            </div>
+          )}
+          {data.date && (
+            <div>
+              <dt>{site.ui.year}</dt>
+              <dd>{data.date.getFullYear()}</dd>
+            </div>
+          )}
           {data.materials.length > 0 && (
             <div>
               <dt>{site.ui.materials}</dt>

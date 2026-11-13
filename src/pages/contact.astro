@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
 import { site } from '../lib/config';
 import InquiryForm from '../components/InquiryForm.astro';
 import Botanical from '../components/Botanical.astro';
@@ -10,8 +11,8 @@ import Botanical from '../components/Botanical.astro';
     <p class="eyebrow">{site.contact.eyebrow}</p>
     <h1>{site.contact.pageTitle}</h1>
     <p>{site.contact.pageIntro}</p>
-    <span class="intro-star" aria-hidden="true">
-      ✧
+    <span class="intro-flower" aria-hidden="true">
+      <Icon name="flower" size={40} />
     </span>
   </section>
   <div class="contact-layout container">

@@ -7,6 +7,7 @@ order: 2
 featured: true
 demo: true
 technique: Broderie florale
+cut: Pochette rectangulaire à coulisse
 materials: [Lin écru, Ruban, Fil à broder]
 images:
   - src: /images/demo/pochette.webp

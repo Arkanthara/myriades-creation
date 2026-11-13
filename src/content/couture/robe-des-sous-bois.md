@@ -8,6 +8,7 @@ featured: true
 draft: false
 demo: true
 technique: Couture & broderie
+cut: Robe évasée, taille froncée
 materials: [Lin, Fil de coton, Boutons en bois]
 images:
   - src: /images/demo/robe.webp

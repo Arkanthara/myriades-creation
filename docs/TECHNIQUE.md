@@ -15,7 +15,7 @@ Références : [collections Astro](https://docs.astro.build/en/guides/content-co
 .github/               CI/CD et mises à jour Dependabot
 docs/                  Guides en français
 public/                Images, favicon et en-têtes Cloudflare
-scripts/               Validation, création de brouillon, contrôle du build
+scripts/               Validation, création de fiche minimale, contrôle du build
 src/
   components/          Cartes, galerie, formulaires et sections réutilisables
   content/
@@ -33,7 +33,7 @@ tests/
   order/               Parcours du configurateur activé temporairement
 ```
 
-`src/content.config.ts` déclare les collections avec le loader `glob`. Les schémas Zod définissent les champs, valident les dates et exigent au moins une image avec un texte alternatif. `draft: true` exclut une œuvre des listes, des routes et du sitemap. Les exemples restent repérables grâce à `demo: true`.
+`src/content.config.ts` déclare les collections avec le loader `glob`. Le schéma couture `creationSchema` exige `title`, `technique`, `cut`, `materials` non vide et `images` non vide. Le schéma dessin `drawingSchema` exige seulement `title`, `technique` et `images` non vide. Chaque image exige uniquement `src` local ; `alt`, `caption`, `width`, `height` et `position` sont facultatifs. Les dates sont validées seulement si elles sont fournies. Description, catégorie et récit sont facultatifs ; les sections absentes ne produisent aucun bloc vide. Sans `alt`, le titre sert de texte alternatif ; une valeur vide explicite est conservée. Aucune dimension ou année fictive n’est générée. Le tri suit `order`, date décroissante (sans date après les fiches datées), puis identifiant. `draft: true` exclut une œuvre des listes, des routes et du sitemap. `draft` et `demo` valent `false` par défaut, y compris dans les fiches générées par `content:new`. Les modèles `_exemple-minimal.md` sont ignorés par les loaders et le validateur ; les tests unitaires vérifient leur conformité. Les exemples publiés restent repérables grâce à `demo: true`. `site.demoMode` est livré à `false` et utilise aussi ce défaut si la clé est omise.
 
 Les fichiers dont le nom commence par `_` sont ignorés ; ils peuvent servir de modèles. Les slugs utilisent des noms de fichiers sans espaces ni accents. Les sous-dossiers sont possibles dans `couture` et `dessin` et produisent des URL avec plusieurs segments.
 
@@ -41,7 +41,7 @@ Les fichiers dont le nom commence par `_` sont ignorés ; ils peuvent servir de 
 
 `src/lib/config.ts` charge et valide les trois fichiers YAML au moment de la compilation. Les textes visibles, les libellés de formulaire, les messages de statut et les libellés d’accessibilité viennent de `site.yaml`. Le texte des récits et des pages d’information vient des fichiers Markdown. Les textes de démonstration ne doivent pas être confondus avec la biographie ou les œuvres réelles de l’artiste.
 
-`theme.yaml` alimente des variables CSS. Les polices sont incluses avec Fontsource ; seules les fontes nécessaires sont téléchargées par le navigateur depuis le site. Pour changer de famille :
+`theme.yaml` alimente des variables CSS : fonds ivoire, or foncé `accent` pour les textes et quatre nuances `gold` / `goldLight` / `goldShadow` / `goldHighlight`. Les variables CSS `--gold-metal` et `--gold-satin` composent un or poli avec ombres ambrées et reflets champagne, utilisé sur les cadres, le ruban, le médaillon et les boutons. Les SVG de `Ornament.astro` et les icônes florales ou papillons utilisent un dégradé aux identifiants uniques ; ces décorations sont masquées aux technologies d’assistance. Les anciens éclats à quatre branches et losanges décoratifs sont remplacés par des fleurs et des papillons, y compris dans les dessins vectoriels de lune et de feuillages et le logo. Les reflets des boutons se déplacent au survol et respectent `prefers-reduced-motion`. `Brand.astro` affiche le logo configuré dans `site.logo` avec le nom et la signature, dans l’en-tête et le pied de page ; `src: ""` conserve le nom seul. Les fichiers locaux du logo sont contrôlés par la validation de contenu. Les polices sont incluses avec Fontsource ; seules les fontes nécessaires sont téléchargées par le navigateur depuis le site. Pour changer de famille :
 
 1. Installer le paquet Fontsource de la nouvelle police.
 2. Modifier ses imports dans `Base.astro`.
@@ -56,9 +56,9 @@ Les éditeurs sont considérés comme des personnes de confiance : Markdown peut
 
 ## Galerie et partage
 
-La galerie utilise l’élément natif `<dialog>` : confinement du focus par le navigateur, fermeture avec Échap, retour au déclencheur, boutons précédent/suivant et touches fléchées. Le compteur et les libellés viennent du YAML. Les images d’une fiche restent des liens directs sans JavaScript. Les filtres sont masqués sans JavaScript et toutes les créations restent visibles.
+La galerie utilise l’élément natif `<dialog>` : confinement du focus par le navigateur, fermeture avec Échap, retour au déclencheur, boutons précédent/suivant et touches fléchées. Le compteur d’images et les libellés viennent du YAML. Les images d’une fiche restent des liens directs sans JavaScript. Les catalogues affichent toutes les créations publiées, avec ou sans JavaScript, directement après leur introduction, sans bandeau annonçant leur nombre. Aucun contrôle ni script de filtrage par catégorie n’est présent. `category` reste un libellé éditorial facultatif affiché uniquement s’il est renseigné sur les cartes et les fiches. Les anciennes clés d’interface `filters`, `filterAll` et `results` ont été supprimées du YAML et du schéma.
 
-Chaque fiche contient un titre, une description, une URL canonique, Open Graph et une image de partage. Le bouton de partage utilise l’API Web Share lorsqu’elle existe, puis la copie dans le presse-papiers. En dernier recours, le champ URL reste sélectionnable. Le lien partagé utilise l’adresse courante sans paramètres ni fragment, ce qui rend aussi les aperçus partageables.
+Chaque fiche contient un titre, une URL canonique, Open Graph et une image de partage. Sans résumé propre à la fiche, la description SEO et sociale reprend celle du site. Le bouton de partage utilise l’API Web Share lorsqu’elle existe, puis la copie dans le presse-papiers. En dernier recours, le champ URL reste sélectionnable. Le lien partagé utilise l’adresse courante sans paramètres ni fragment, ce qui rend aussi les aperçus partageables.
 
 Le partage natif et le presse-papiers dépendent du navigateur et du contexte sécurisé HTTPS. Les liens restent utilisables si ces API sont absentes.
 

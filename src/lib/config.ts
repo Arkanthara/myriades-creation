@@ -19,7 +19,7 @@ export const siteSchema = z.object({
   description: text,
   locale: text,
   language: text,
-  demoMode: z.boolean(),
+  demoMode: z.boolean().default(false),
   demoNotice: text,
   logo: z.object({ src: z.union([z.literal(''), localPath]), alt: text, tagline: text }),
   socials: z.array(z.object({ label: text, url: publicUrl })),
@@ -93,9 +93,6 @@ export const siteSchema = z.object({
     'skip',
     'home',
     'close',
-    'filterAll',
-    'filters',
-    'results',
     'empty',
     'viewCreation',
     'demoBadge',
@@ -113,6 +110,7 @@ export const siteSchema = z.object({
     'materials',
     'year',
     'technique',
+    'cut',
     'backCouture',
     'backDrawing',
     'inspired',
@@ -136,6 +134,10 @@ export const themeSchema = z.object({
         'primary',
         'primaryHover',
         'accent',
+        'gold',
+        'goldLight',
+        'goldShadow',
+        'goldHighlight',
         'line',
         'rose',
       ].map((key) => [key, z.string().regex(/^#[\da-fA-F]{6}$/)]),
@@ -147,6 +149,10 @@ export const themeSchema = z.object({
       | 'primary'
       | 'primaryHover'
       | 'accent'
+      | 'gold'
+      | 'goldLight'
+      | 'goldShadow'
+      | 'goldHighlight'
       | 'line'
       | 'rose',
       z.ZodString

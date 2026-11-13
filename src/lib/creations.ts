@@ -5,7 +5,7 @@ export async function creations(kind: Kind): Promise<Creation[]> {
   return (await getCollection(kind, ({ data }) => !data.draft)).sort(
     (a, b) =>
       a.data.order - b.data.order ||
-      b.data.date.getTime() - a.data.date.getTime() ||
+      (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0) ||
       a.id.localeCompare(b.id),
   );
 }

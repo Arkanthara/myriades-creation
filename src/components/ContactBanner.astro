@@ -2,10 +2,12 @@
 import { site } from '../lib/config';
 import Icon from './Icon.astro';
 import Botanical from './Botanical.astro';
+import Ornament from './Ornament.astro';
 ---
 
 <section class="contact-banner container">
   <Botanical class="contact-sprig" />
+  <Ornament />
   <p class="eyebrow">{site.contact.eyebrow}</p>
   <h2>{site.contact.title}</h2>
   <p>{site.contact.description}</p>

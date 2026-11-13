@@ -109,7 +109,7 @@ npm run build
 npx wrangler pages deploy dist --project-name=myriade-creation --branch=demonstration
 ```
 
-Gardez `demoMode: true` pour cette démonstration. Un aperçu ne remplace pas la production de la branche `main`.
+`demoMode` est livré à `false` et vaut `false` par défaut. Pour un aperçu volontairement en démonstration, utilisez `demoMode: true`. Un aperçu ne remplace pas la production de la branche `main`.
 
 ## 7. Revenir à une version précédente
 

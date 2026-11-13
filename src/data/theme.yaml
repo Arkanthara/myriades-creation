@@ -1,17 +1,22 @@
+# Ivoire et or poli : ombres ambrées, or riche et reflets champagne.
 # Les couleurs acceptent les codes hexadécimaux à 6 chiffres.
 colors:
-  background: '#f8f6ef'
-  surface: '#eeeee4'
-  ink: '#303e33'
-  muted: '#596451'
-  primary: '#435d46'
-  primaryHover: '#304633'
-  accent: '#94654d'
-  line: '#d5d7c9'
-  rose: '#ecdfd8'
+  background: '#fffaf0'
+  surface: '#f7edcf'
+  ink: '#3b2a0c'
+  muted: '#6d5934'
+  primary: '#73500d'
+  primaryHover: '#543906'
+  accent: '#79520c'
+  gold: '#d4a52e'
+  goldLight: '#f6df94'
+  goldShadow: '#91600d'
+  goldHighlight: '#fff5cf'
+  line: '#dfca8f'
+  rose: '#f7ecd9'
 fonts:
   heading: "'Cormorant Garamond', Georgia, serif"
   body: "'DM Sans', sans-serif"
 layout:
   maxWidth: 1240
-  imageRadius: 4
+  imageRadius: 12

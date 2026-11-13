@@ -4,40 +4,23 @@ import { site } from '../lib/config';
 import { creations, type Kind } from '../lib/creations';
 import CreationCard from './CreationCard.astro';
 import ContactBanner from './ContactBanner.astro';
+import Ornament from './Ornament.astro';
 interface Props {
   kind: Kind;
 }
 const { kind } = Astro.props;
 const entries = await creations(kind);
 const info = site.collections[kind];
-const categories = [...new Set(entries.map((entry) => entry.data.category))];
 ---
 
 <Base title={info.title} description={info.description}>
   <section class="page-intro container">
+    <Ornament />
     <p class="eyebrow">{info.eyebrow}</p>
     <h1>{info.title}</h1>
     <p>{info.description}</p>
-    <span class="intro-star" aria-hidden="true">
-      ✧
-    </span>
   </section>
-  <section class="container collection-section" data-collection>
-    <div class="collection-toolbar">
-      <div class="filter-list" role="group" aria-label={site.ui.filters} data-filters hidden>
-        <button class="filter active" aria-pressed="true" data-filter="*">
-          {site.ui.filterAll}
-        </button>
-        {categories.map((category) => (
-          <button class="filter" aria-pressed="false" data-filter={category}>
-            {category}
-          </button>
-        ))}
-      </div>
-      <p class="result-count" aria-live="polite">
-        <span data-result-count>{entries.length}</span> {site.ui.results}
-      </p>
-    </div>
+  <section class="container collection-section">
     <div class:list={[kind === 'dessin' ? 'drawing-grid' : 'creation-grid', 'collection-grid']}>
       {entries.map((entry) => (
         <CreationCard
@@ -48,31 +31,9 @@ const categories = [...new Set(entries.map((entry) => entry.data.category))];
         />
       ))}
     </div>
-    <p class="empty-state" data-empty hidden={entries.length > 0}>
+    <p class="empty-state" hidden={entries.length > 0}>
       {site.ui.empty}
     </p>
   </section>
   <ContactBanner />
 </Base>
-<script>
-  const collection = document.querySelector('[data-collection]');
-  if (collection) {
-    const filters = collection.querySelector<HTMLElement>('[data-filters]')!;
-    const buttons = [...filters.querySelectorAll<HTMLButtonElement>('[data-filter]')];
-    const cards = [...collection.querySelectorAll<HTMLElement>('[data-category]')];
-    filters.hidden = false;
-    for (const button of buttons)
-      button.addEventListener('click', () => {
-        for (const item of buttons) {
-          item.classList.toggle('active', item === button);
-          item.setAttribute('aria-pressed', String(item === button));
-        }
-        for (const card of cards)
-          card.hidden =
-            button.dataset.filter !== '*' && card.dataset.category !== button.dataset.filter;
-        const count = cards.filter((card) => !card.hidden).length;
-        collection.querySelector('[data-result-count]')!.textContent = String(count);
-        collection.querySelector<HTMLElement>('[data-empty]')!.hidden = count > 0;
-      });
-  }
-</script>

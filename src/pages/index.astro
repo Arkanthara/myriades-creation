@@ -6,6 +6,7 @@ import CreationCard from '../components/CreationCard.astro';
 import ContactBanner from '../components/ContactBanner.astro';
 import Icon from '../components/Icon.astro';
 import Botanical from '../components/Botanical.astro';
+import Ornament from '../components/Ornament.astro';
 const sewing = await creations('couture');
 const drawings = await creations('dessin');
 const featured = [
@@ -17,8 +18,11 @@ const featured = [
 <Base>
   <section class="hero container">
     <div class="hero-copy">
+      <Ornament class="hero-ornament" />
       <p class="eyebrow">
-        <span aria-hidden="true">✧</span>
+        <span aria-hidden="true">
+          <Icon name="flower" size={24} />
+        </span>
         {site.home.eyebrow}
       </p>
       <h1>
@@ -49,7 +53,7 @@ const featured = [
         />
       </div>
       <div class="atelier-stamp">
-        <Icon name="sparkle" size={27} />
+        <Icon name="butterfly" size={32} />
         <span>{site.home.imageStamp}</span>
       </div>
       <p class="handwritten">
@@ -62,7 +66,7 @@ const featured = [
     <div class="container">
       {site.home.ribbon.map((text) => (
         <span>
-          <Icon name="sparkle" size={14} />
+          <Icon name="flower" size={18} />
           {text}
         </span>
       ))}
@@ -97,7 +101,7 @@ const featured = [
           loading="lazy"
         />
         <span class="art-corner" aria-hidden="true">
-          ✧
+          <Icon name="butterfly" size={66} />
         </span>
       </div>
       <div class="atelier-copy">

@@ -12,32 +12,14 @@ const dir = `src/content/${kind}`;
 await mkdir(dir, { recursive: true });
 const content = {
   title,
-  description: 'Décrivez votre création en une ou deux phrases.',
-  category: kind === 'couture' ? 'Accessoires' : 'Dessin',
-  date: new Date().toISOString().slice(0, 10),
-  order: 100,
-  featured: false,
-  draft: true,
-  demo: false,
   technique: 'À personnaliser',
-  materials: [],
-  images: [
-    {
-      src: '/images/demo/atelier.webp',
-      alt: 'À remplacer par une description de votre image.',
-      width: 1536,
-      height: 1024,
-    },
-  ],
+  ...(kind === 'couture' ? { cut: 'À personnaliser', materials: ['À personnaliser'] } : {}),
+  images: [{ src: `/images/${slug}.webp` }],
 };
 try {
-  await writeFile(
-    `${dir}/${slug}.md`,
-    `---\n${stringify(content)}---\n\n## L’histoire de cette création\n\nRacontez ici votre inspiration et votre démarche.\n`,
-    { flag: 'wx' },
-  );
+  await writeFile(`${dir}/${slug}.md`, `---\n${stringify(content)}---\n`, { flag: 'wx' });
   console.log(
-    `Brouillon créé : ${dir}/${slug}.md. Ajoutez vos images, puis passez draft à false pour le publier.`,
+    `Fiche créée : ${dir}/${slug}.md (demo: false et draft: false par défaut). Personnalisez les champs et ajoutez public/images/${slug}.webp avant compilation. Pour la masquer, ajoutez draft: true.`,
   );
 } catch (error) {
   if ((error as NodeJS.ErrnoException).code === 'EEXIST')

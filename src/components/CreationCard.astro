@@ -13,7 +13,7 @@ const { entry, compact = false, gallery, heading: Heading = 'h3' } = Astro.props
 const image = entry.data.images[0];
 ---
 
-<article class:list={['creation-card', { compact }]} data-category={entry.data.category}>
+<article class:list={['creation-card', { compact }]}>
   <div class="card-image-wrap">
     <a href={creationUrl(entry)} class="card-image" tabindex="-1" aria-hidden="true">
       <img
@@ -34,7 +34,7 @@ const image = entry.data.images[0];
         data-gallery-open
         data-gallery-group={gallery}
         data-src={image.src}
-        data-alt={image.alt}
+        data-alt={image.alt ?? entry.data.title}
         data-caption={image.caption || entry.data.title}
       >
         <Icon name="expand" size={18} />
@@ -42,12 +42,12 @@ const image = entry.data.images[0];
     )}
   </div>
   <div class="card-meta">
-    <span>{entry.data.category}</span>
+    {entry.data.category && <span>{entry.data.category}</span>}
     <span>{entry.data.technique}</span>
   </div>
   <a class="card-title" href={creationUrl(entry)}>
     <Heading>{entry.data.title}</Heading>
     <Icon name="diagonal" size={19} />
   </a>
-  {!compact && <p class="card-description">{entry.data.description}</p>}
+  {!compact && entry.data.description && <p class="card-description">{entry.data.description}</p>}
 </article>

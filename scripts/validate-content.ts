@@ -2,7 +2,7 @@ import { readFile, readdir, access } from 'node:fs/promises';
 import { resolve, relative } from 'node:path';
 import { parse } from 'yaml';
 import { site, siteUrl, customOrder } from '../src/lib/config';
-import { creationSchema, pageSchema } from '../src/lib/content-schema';
+import { creationSchema, drawingSchema, pageSchema } from '../src/lib/content-schema';
 
 const publicRoot = resolve('public');
 async function checkAsset(src: string) {
@@ -43,7 +43,8 @@ for (const kind of ['couture', 'dessin', 'pages']) {
         throw new Error(`Nom de page réservé : ${id}`);
       pageIds.push(id);
     } else {
-      const data = creationSchema.parse(parse(frontmatter[1]));
+      const schema = kind === 'couture' ? creationSchema : drawingSchema;
+      const data = schema.parse(parse(frontmatter[1]));
       for (const image of data.images) await checkAsset(image.src);
     }
     count++;

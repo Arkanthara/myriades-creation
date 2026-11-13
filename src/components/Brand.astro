@@ -1,0 +1,21 @@
+---
+import { site } from '../lib/config';
+interface Props {
+  footer?: boolean;
+}
+const { footer = false } = Astro.props;
+---
+
+<a
+  href="/"
+  class:list={['brand', { 'footer-brand': footer }]}
+  aria-label={`${site.name} ${site.logo.tagline} — ${site.ui.home}`}
+>
+  {site.logo.src && (
+    <img class="brand-logo" src={site.logo.src} alt={site.logo.alt} width="72" height="72" />
+  )}
+  <span class="brand-wordmark">
+    <span class="brand-name">{site.name}</span>{' '}
+    <span class="brand-tagline">{site.logo.tagline}</span>
+  </span>
+</a>
