@@ -1,0 +1,31 @@
+# Socle de la prochaine étape. La page n’apparaît que si enabled vaut true.
+enabled: false
+navigationLabel: Imaginer ma création
+eyebrow: Une création à votre mesure
+title: Imaginons votre prochaine histoire.
+description: 'Choisissez vos matières et indiquez vos mesures. Votre demande sera préparée dans un e-mail pour en discuter ensemble, sans achat ni paiement.'
+submit: Préparer ma demande
+summaryTitle: Le fil de votre projet
+notice: 'Cette demande permet de discuter de votre projet. Elle ne constitue pas une commande confirmée. Les mesures sont exprimées en centimètres.'
+notesLabel: Vos envies et précisions
+notesPlaceholder: 'Une occasion, des couleurs, une inspiration…'
+mailSubject: Mon projet de création sur mesure
+mailGreeting: Bonjour, voici mon idée de création sur mesure.
+measurementsLabel: Mes mesures (cm)
+optionsLabel: Mes choix
+unit: cm
+measurements:
+  - { id: poitrine, label: Tour de poitrine, min: 30, max: 250, required: false }
+  - { id: taille, label: Tour de taille, min: 30, max: 250, required: false }
+  - { id: hanches, label: Tour de hanches, min: 30, max: 250, required: false }
+  - { id: longueur, label: Longueur souhaitée, min: 5, max: 250, required: false }
+options:
+  - id: tissu
+    label: Le tissu
+    choices: [À définir ensemble, Lin, Coton, Double gaze]
+  - id: couleur
+    label: La couleur
+    choices: [À définir ensemble, Sauge, Écru, Rose ancien]
+  - id: boutons
+    label: Les boutons
+    choices: [À définir ensemble, Bois, Nacre, Sans boutons]

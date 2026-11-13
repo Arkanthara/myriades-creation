@@ -1,0 +1,47 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import { customOrder } from '../lib/config';
+import InquiryForm from '../components/InquiryForm.astro';
+import ContactBanner from '../components/ContactBanner.astro';
+export async function getStaticPaths() {
+  const pages = await getCollection('pages');
+  return [
+    ...pages.map((entry) => ({ params: { page: entry.id }, props: { entry, order: false } })),
+    ...(customOrder.enabled
+      ? [{ params: { page: 'sur-mesure' }, props: { entry: undefined, order: true } }]
+      : []),
+  ];
+}
+interface Props {
+  entry?: CollectionEntry<'pages'>;
+  order: boolean;
+}
+const { entry, order } = Astro.props;
+const content = entry ? await render(entry) : undefined;
+const Content = content?.Content;
+const title = order ? customOrder.title : entry!.data.title;
+const description = order ? customOrder.description : entry!.data.description;
+const eyebrow = order ? customOrder.eyebrow : entry!.data.eyebrow;
+---
+
+<Base title={title} description={description}>
+  <section class="page-intro container">
+    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    <h1>{title}</h1>
+    <p>{description}</p>
+    <span class="intro-star" aria-hidden="true">
+      ✧
+    </span>
+  </section>
+  {order ? (
+    <div class="container order-layout">
+      <InquiryForm mode="order" />
+    </div>
+  ) : (
+    <div class="container editorial-page">
+      <div class="prose">{Content && <Content />}</div>
+    </div>
+  )}
+  {entry?.id === 'atelier' && <ContactBanner />}
+</Base>

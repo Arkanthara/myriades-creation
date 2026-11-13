@@ -1,0 +1,108 @@
+name: Vérifier et déployer Myriade Création
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: myriade-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  SITE_URL: ${{ vars.SITE_URL }}
+  CF_PAGES_BRANCH: ${{ github.head_ref || github.ref_name }}
+  ASTRO_TELEMETRY_DISABLED: '1'
+
+jobs:
+  verify:
+    name: Contenu, types, tests et site compilé
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run check
+      - run: npm test
+      - run: npm run build
+      - run: npm run test:e2e
+      - run: npm run test:order
+      - name: Conserver le site vérifié
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: site-${{ github.sha }}
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error
+      - name: Conserver les résultats en cas d’échec
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: tests-${{ github.run_id }}
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  devcontainer:
+    name: Construire le dev container
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - run: docker build -t myriade-devcontainer -f .devcontainer/Dockerfile .devcontainer
+      - run: docker run --rm myriade-devcontainer node --version
+
+  deploy:
+    name: Cloudflare Pages
+    needs: [verify, devcontainer]
+    # Sans variable de projet, la CI reste pleinement utilisable sans Cloudflare.
+    # Les forks exécutent les tests sans accéder aux secrets de déploiement.
+    if: >-
+      vars.CLOUDFLARE_PROJECT_NAME != '' &&
+      ((github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name != 'pull_request' && github.ref == 'refs/heads/main'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: ${{ github.event_name == 'pull_request' && 'preview' || 'production' }}
+    env:
+      CLOUDFLARE_PROJECT_NAME: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
+      DEPLOY_BRANCH: ${{ github.event_name == 'pull_request' && format('preview-pr-{0}', github.event.pull_request.number) || 'main' }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Vérifier la configuration de lancement
+        if: github.event_name != 'pull_request'
+        run: npm run validate:production
+      - name: Récupérer exactement le site testé
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: site-${{ github.sha }}
+          path: dist/
+      - name: Publier sur Cloudflare Pages
+        run: npx wrangler pages deploy dist --project-name="$CLOUDFLARE_PROJECT_NAME" --branch="$DEPLOY_BRANCH"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

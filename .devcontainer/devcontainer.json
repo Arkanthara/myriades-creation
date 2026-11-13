@@ -1,0 +1,23 @@
+{
+  "name": "Myriade Création · Astro",
+  "build": { "dockerfile": "Dockerfile" },
+  "remoteUser": "node",
+  "forwardPorts": [4321],
+  "portsAttributes": {
+    "4321": { "label": "Myriade Création", "onAutoForward": "openPreview" }
+  },
+  "postCreateCommand": "npm ci && npx playwright install chromium",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "astro-build.astro-vscode",
+        "redhat.vscode-yaml",
+        "yzhang.markdown-all-in-one"
+      ],
+      "settings": {
+        "files.exclude": { "**/.astro": true, "**/dist": true },
+        "editor.wordWrap": "on"
+      }
+    }
+  }
+}

@@ -1,0 +1,60 @@
+---
+import { site, siteUrl } from '../lib/config';
+import Icon from './Icon.astro';
+interface Props {
+  title: string;
+  path: string;
+}
+const { title, path } = Astro.props;
+---
+
+<div
+  class="share"
+  data-share
+  data-title={title}
+  data-success={site.ui.linkCopied}
+  data-error={site.ui.shareError}
+>
+  <div class="share-actions">
+    <button type="button" class="button button-small" data-native-share>
+      <Icon name="share" size={17} />
+      {site.ui.share}
+    </button>
+    <button type="button" class="text-button" data-copy-link>
+      <Icon name="copy" size={16} />
+      {site.ui.copyLink}
+    </button>
+  </div>
+  <label class="sr-only" for="share-url">
+    {site.ui.shareUrl}
+  </label>
+  <input id="share-url" class="share-url" readonly value={new URL(path, siteUrl).href} />
+  <p class="status" aria-live="polite" data-share-status></p>
+</div>
+<script>
+  const root = document.querySelector<HTMLElement>('[data-share]');
+  if (root) {
+    const field = root.querySelector<HTMLInputElement>('input')!;
+    const status = root.querySelector<HTMLElement>('[data-share-status]')!;
+    field.value = window.location.href.split(/[?#]/)[0];
+    async function copy() {
+      try {
+        await navigator.clipboard.writeText(field.value);
+        status.textContent = root!.dataset.success!;
+      } catch {
+        status.textContent = root!.dataset.error!;
+        field.focus();
+        field.select();
+      }
+    }
+    root.querySelector('[data-copy-link]')!.addEventListener('click', copy);
+    root.querySelector('[data-native-share]')!.addEventListener('click', async () => {
+      if (!navigator.share) return copy();
+      try {
+        await navigator.share({ title: root.dataset.title, url: field.value });
+      } catch (error) {
+        if (!(error instanceof DOMException && error.name === 'AbortError')) await copy();
+      }
+    });
+  }
+</script>

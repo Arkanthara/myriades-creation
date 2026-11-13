@@ -1,0 +1,192 @@
+---
+import { site, customOrder } from '../lib/config';
+import Icon from './Icon.astro';
+interface Props {
+  mode?: 'contact' | 'order';
+}
+const { mode = 'contact' } = Astro.props;
+const order = mode === 'order';
+const config = { contact: site.contact, order: customOrder, mode };
+---
+
+<form class="inquiry-form" data-inquiry data-config={JSON.stringify(config)}>
+  <div class="form-row">
+    <div class="form-field">
+      <label for="name">
+        {site.contact.nameLabel} <small>({site.ui.required})</small>
+      </label>
+      <input
+        id="name"
+        name="name"
+        autocomplete="given-name"
+        placeholder={site.contact.namePlaceholder}
+        required
+        maxlength="100"
+      />
+    </div>
+    <div class="form-field">
+      <label for="email">
+        {site.contact.emailLabel} <small>({site.ui.required})</small>
+      </label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        placeholder={site.contact.emailPlaceholder}
+        required
+        maxlength="254"
+      />
+    </div>
+  </div>
+  {order ? (
+    <>
+      <fieldset class="form-fieldset">
+        <legend>{customOrder.optionsLabel}</legend>
+        <div class="form-row">
+          {customOrder.options.map((option) => (
+            <div class="form-field">
+              <label for={`option-${option.id}`}>{option.label}</label>
+              <select id={`option-${option.id}`} name={`option-${option.id}`}>
+                {option.choices.map((choice) => (
+                  <option value={choice}>{choice}</option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset class="form-fieldset">
+        <legend>{customOrder.measurementsLabel}</legend>
+        <div class="form-row">
+          {customOrder.measurements.map((field) => (
+            <div class="form-field">
+              <label for={`measure-${field.id}`}>
+                {field.label} ({customOrder.unit}){' '}
+                <small>({field.required ? site.ui.required : site.ui.optional})</small>
+              </label>
+              <input
+                type="number"
+                id={`measure-${field.id}`}
+                name={`measure-${field.id}`}
+                min={field.min}
+                max={field.max}
+                step="0.5"
+                required={field.required}
+                inputmode="decimal"
+              />
+            </div>
+          ))}
+        </div>
+      </fieldset>
+    </>
+  ) : (
+    <div class="form-field">
+      <label for="subject">{site.contact.subjectLabel}</label>
+      <select id="subject" name="subject">
+        {site.contact.subjects.map((subject) => (
+          <option value={subject}>{subject}</option>
+        ))}
+      </select>
+    </div>
+  )}
+  <div class="form-field">
+    <label for="message">
+      {order ? customOrder.notesLabel : site.contact.messageLabel}{' '}
+      <small>({order ? site.ui.optional : site.ui.required})</small>
+    </label>
+    <textarea
+      id="message"
+      name="message"
+      rows="6"
+      placeholder={order ? customOrder.notesPlaceholder : site.contact.messagePlaceholder}
+      required={!order}
+      maxlength="3000"
+    ></textarea>
+  </div>
+  <button type="submit" class="button" data-submit disabled>
+    {order ? customOrder.submit : site.contact.submit}
+    <Icon name="mail" size={18} />
+  </button>
+  <noscript>
+    <p class="form-notice">{site.contact.noScript}</p>
+  </noscript>
+  <p class="form-notice">{order ? customOrder.notice : site.contact.notice}</p>
+  <p role="status" class="status" data-inquiry-status></p>
+  <div class="form-draft" data-draft hidden>
+    <div class="form-field">
+      <label for="draft">{order ? customOrder.summaryTitle : site.contact.draftTitle}</label>
+      <textarea id="draft" readonly rows="10" data-draft-text></textarea>
+    </div>
+    <button type="button" class="text-button" data-copy-draft>
+      <Icon name="copy" size={16} />
+      {site.contact.copy}
+    </button>
+  </div>
+</form>
+<script>
+  import { buildContactBody, buildMailto, buildOrderBody } from '../lib/mail';
+  import type { site, customOrder } from '../lib/config';
+  type Config = {
+    contact: typeof site.contact;
+    order: typeof customOrder;
+    mode: 'contact' | 'order';
+  };
+  const form = document.querySelector<HTMLFormElement>('[data-inquiry]');
+  if (form) {
+    const config: Config = JSON.parse(form.dataset.config!);
+    form.querySelector<HTMLButtonElement>('[data-submit]')!.disabled = false;
+    const status = form.querySelector<HTMLElement>('[data-inquiry-status]')!;
+    const draft = form.querySelector<HTMLElement>('[data-draft]')!;
+    const draftText = form.querySelector<HTMLTextAreaElement>('[data-draft-text]')!;
+    const creation = new URLSearchParams(location.search).get('creation')?.slice(0, 200) || '';
+    const build = () => {
+      const values = new FormData(form);
+      const get = (key: string) => String(values.get(key) || '').trim();
+      const input = {
+        name: get('name'),
+        email: get('email'),
+        subject: config.mode === 'order' ? config.order.mailSubject : get('subject'),
+        message: config.mode === 'order' ? '' : get('message'),
+        creation,
+      };
+      let body = buildContactBody(input, config.contact);
+      if (config.mode === 'order') {
+        const orderValues: Record<string, string> = { notes: get('message') };
+        for (const field of config.order.measurements)
+          orderValues[field.id] = get(`measure-${field.id}`);
+        for (const option of config.order.options)
+          orderValues[option.id] = get(`option-${option.id}`);
+        body += `\n\n${buildOrderBody(orderValues, config.order)}`;
+      }
+      draftText.value = body;
+      return body;
+    };
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const body = build();
+      draft.hidden = false;
+      if (config.contact.email) {
+        const subject =
+          config.mode === 'order'
+            ? config.order.mailSubject
+            : `${config.contact.mailSubjectPrefix} — ${String(new FormData(form).get('subject') || '')}`;
+        window.location.href = buildMailto(config.contact.email, subject, body);
+        status.textContent = config.contact.prepared;
+      } else status.textContent = config.contact.unavailable;
+    });
+    form.addEventListener('input', () => {
+      if (!draft.hidden) build();
+    });
+    form.querySelector('[data-copy-draft]')!.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(draftText.value);
+        status.textContent = config.contact.copied;
+      } catch {
+        status.textContent = config.contact.copyError;
+        draftText.focus();
+        draftText.select();
+      }
+    });
+  }
+</script>

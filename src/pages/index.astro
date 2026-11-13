@@ -1,0 +1,138 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../lib/config';
+import { creations } from '../lib/creations';
+import CreationCard from '../components/CreationCard.astro';
+import ContactBanner from '../components/ContactBanner.astro';
+import Icon from '../components/Icon.astro';
+import Botanical from '../components/Botanical.astro';
+const sewing = await creations('couture');
+const drawings = await creations('dessin');
+const featured = [
+  ...sewing.filter((e) => e.data.featured),
+  ...sewing.filter((e) => !e.data.featured),
+].slice(0, 3);
+---
+
+<Base>
+  <section class="hero container">
+    <div class="hero-copy">
+      <p class="eyebrow">
+        <span aria-hidden="true">✧</span>
+        {site.home.eyebrow}
+      </p>
+      <h1>
+        {site.home.title}
+        <br />
+        <em>{site.home.titleAccent}</em>
+      </h1>
+      <p class="hero-description">{site.home.description}</p>
+      <div class="hero-actions">
+        <a class="button" href="#creations">
+          {site.home.primary}
+          <Icon name="arrow" size={18} />
+        </a>
+        <a class="text-link" href="/atelier/">
+          {site.home.secondary}
+        </a>
+      </div>
+      <Botanical class="hero-sprig" />
+    </div>
+    <div class="hero-visual">
+      <div class="hero-image">
+        <img
+          src={site.home.image}
+          alt={site.home.imageAlt}
+          width="1536"
+          height="1024"
+          fetchpriority="high"
+        />
+      </div>
+      <div class="atelier-stamp">
+        <Icon name="sparkle" size={27} />
+        <span>{site.home.imageStamp}</span>
+      </div>
+      <p class="handwritten">
+        {site.home.imageCaption}
+        <span aria-hidden="true"> ↗</span>
+      </p>
+    </div>
+  </section>
+  <div class="ribbon">
+    <div class="container">
+      {site.home.ribbon.map((text) => (
+        <span>
+          <Icon name="sparkle" size={14} />
+          {text}
+        </span>
+      ))}
+    </div>
+  </div>
+  <section class="section container" id="creations">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{site.home.selectionEyebrow}</p>
+        <h2>{site.home.selectionTitle}</h2>
+      </div>
+      <a class="text-link arrow-link" href="/couture/">
+        {site.home.allCouture}
+        <Icon name="arrow" size={19} />
+      </a>
+    </div>
+    <p class="section-intro">{site.home.selectionText}</p>
+    <div class="creation-grid">
+      {featured.map((entry) => (
+        <CreationCard entry={entry} />
+      ))}
+    </div>
+  </section>
+  <section class="atelier-section">
+    <div class="container atelier-grid">
+      <div class="atelier-art">
+        <img
+          src={site.home.atelierImage}
+          alt={site.home.atelierImageAlt}
+          width="1024"
+          height="1536"
+          loading="lazy"
+        />
+        <span class="art-corner" aria-hidden="true">
+          ✧
+        </span>
+      </div>
+      <div class="atelier-copy">
+        <p class="eyebrow">{site.home.atelierEyebrow}</p>
+        <h2>
+          {site.home.atelierTitle}
+          <br />
+          <em>{site.home.atelierAccent}</em>
+        </h2>
+        <p>{site.home.atelierText}</p>
+        <a class="text-link arrow-link" href="/atelier/">
+          {site.home.atelierLink}
+          <Icon name="arrow" size={20} />
+        </a>
+        <Botanical class="atelier-sprig" />
+      </div>
+    </div>
+  </section>
+  <section class="section container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">{site.home.drawingEyebrow}</p>
+        <h2>{site.home.drawingTitle}</h2>
+      </div>
+      <a class="text-link arrow-link" href="/dessin/">
+        {site.home.allDrawing}
+        <Icon name="arrow" size={19} />
+      </a>
+    </div>
+    <p class="section-intro">{site.home.drawingText}</p>
+    <div class="drawing-preview">
+      {drawings.slice(0, 3).map((entry) => (
+        <CreationCard entry={entry} compact gallery="home-drawings" />
+      ))}
+    </div>
+  </section>
+  <ContactBanner />
+</Base>

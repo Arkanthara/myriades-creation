@@ -1,0 +1,162 @@
+---
+import '@fontsource/cormorant-garamond/400.css';
+import '@fontsource/cormorant-garamond/500.css';
+import '@fontsource/cormorant-garamond/400-italic.css';
+import '@fontsource/dm-sans/400.css';
+import '@fontsource/dm-sans/500.css';
+import '../styles/global.css';
+import { site, siteUrl, theme, customOrder } from '../lib/config';
+import Icon from '../components/Icon.astro';
+import GalleryDialog from '../components/GalleryDialog.astro';
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+}
+const {
+  title,
+  description = site.description,
+  image = site.home.image,
+  noindex = false,
+} = Astro.props;
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.logo.tagline}`;
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
+const colors = Object.entries(theme.colors)
+  .map(([key, value]) => `--${key.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)}:${value}`)
+  .join(';');
+const css = `:root{${colors};--font-heading:${theme.fonts.heading};--font-body:${theme.fonts.body};--max-width:${theme.layout.maxWidth}px;--image-radius:${theme.layout.imageRadius}px}`;
+const nav = [
+  ...site.navigation,
+  ...(customOrder.enabled ? [{ label: customOrder.navigationLabel, href: '/sur-mesure/' }] : []),
+];
+const active = (href: string) =>
+  href === '/' ? Astro.url.pathname === '/' : Astro.url.pathname.startsWith(href);
+const structured = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: site.name,
+  url: siteUrl,
+  description: site.description,
+  inLanguage: site.language,
+};
+---
+
+<!doctype html>
+<html lang={site.language}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={theme.colors.background} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(image, siteUrl).href} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {(noindex ||
+      site.demoMode ||
+      (process.env.CF_PAGES_BRANCH && process.env.CF_PAGES_BRANCH !== 'main')) && (
+      <meta name="robots" content="noindex, nofollow" />
+    )}
+    <style is:inline set:html={css}></style>
+    <script
+      type="application/ld+json"
+      is:inline
+      set:html={JSON.stringify(structured).replace(/</g, '\\u003c')}
+    ></script>
+    <slot name="head" />
+  </head>
+  <body id="top">
+    <a href="#main" class="skip-link">
+      {site.ui.skip}
+    </a>
+    {site.demoMode && <div class="demo-notice">{site.demoNotice}</div>}
+    <header class="site-header container">
+      <a href="/" class="brand">
+        {site.logo.src ? (
+          <img class="brand-logo" src={site.logo.src} alt={site.logo.alt} width="200" height="72" />
+        ) : (
+          <>
+            <span class="brand-name">
+              {site.name}
+              <span aria-hidden="true" class="brand-star">
+                ✧
+              </span>
+            </span>
+            <span class="brand-tagline">{site.logo.tagline}</span>
+          </>
+        )}
+      </a>
+      <nav class="desktop-nav" aria-label={site.ui.menu}>
+        {nav.map((item) => (
+          <a href={item.href} aria-current={active(item.href) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))}
+      </nav>
+      <a href="/contact/" class="header-contact">
+        {site.contact.navLabel}
+        <Icon name="diagonal" size={17} />
+      </a>
+      <details class="mobile-menu">
+        <summary>
+          {site.ui.menu}
+          <span aria-hidden="true">＋</span>
+        </summary>
+        <nav aria-label={site.ui.menu}>
+          {nav.map((item) => (
+            <a href={item.href} aria-current={active(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          ))}
+          <a href="/contact/">{site.contact.button}</a>
+        </nav>
+      </details>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer container">
+      <div class="footer-main">
+        <div>
+          <a href="/" class="footer-brand">
+            {site.name}
+            <span aria-hidden="true"> ✧</span>
+          </a>
+          <p>{site.footer.text}</p>
+        </div>
+        <div class="footer-links">
+          {site.socials.map((item) => (
+            <a href={item.url} rel="noopener noreferrer" target="_blank">
+              {item.label}
+              <Icon name="diagonal" size={14} />
+            </a>
+          ))}
+          <a href="/contact/">{site.contact.button}</a>
+          <a href="#top">
+            {site.footer.backTop}
+            <Icon name="up" size={14} />
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <small>
+          © {new Date().getFullYear()} {site.footer.copyright}
+        </small>
+        <div>
+          <a href="/mentions-legales/">{site.footer.legal}</a>
+          <a href="/confidentialite/">{site.footer.privacy}</a>
+        </div>
+      </div>
+    </footer>
+    <GalleryDialog />
+  </body>
+</html>

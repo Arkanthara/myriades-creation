@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../lib/config';
+import InquiryForm from '../components/InquiryForm.astro';
+import Botanical from '../components/Botanical.astro';
+---
+
+<Base title={site.contact.button} description={site.contact.pageIntro}>
+  <section class="page-intro container">
+    <p class="eyebrow">{site.contact.eyebrow}</p>
+    <h1>{site.contact.pageTitle}</h1>
+    <p>{site.contact.pageIntro}</p>
+    <span class="intro-star" aria-hidden="true">
+      ✧
+    </span>
+  </section>
+  <div class="contact-layout container">
+    <aside class="contact-aside">
+      {site.contact.email ? (
+        <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
+      ) : (
+        <p>{site.contact.unavailable}</p>
+      )}
+      <p class="form-notice">{site.contact.notice}</p>
+      <Botanical />
+    </aside>
+    <InquiryForm />
+  </div>
+</Base>

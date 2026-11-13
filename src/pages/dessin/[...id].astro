@@ -1,0 +1,12 @@
+---
+import { creations } from '../../lib/creations';
+import CreationPage from '../../components/CreationPage.astro';
+export async function getStaticPaths() {
+  return (await creations('dessin')).map((entry) => ({
+    params: { id: entry.id },
+    props: { entry },
+  }));
+}
+---
+
+<CreationPage entry={Astro.props.entry} />

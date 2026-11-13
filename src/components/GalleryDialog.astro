@@ -1,0 +1,87 @@
+---
+import { site } from '../lib/config';
+import Icon from './Icon.astro';
+---
+
+<dialog
+  class="lightbox"
+  aria-label={site.ui.creationGallery}
+  data-lightbox
+  data-counter-template={site.ui.imageCounter}
+>
+  <div class="lightbox-toolbar">
+    <span data-lightbox-counter></span>
+    <button class="icon-button" data-lightbox-close aria-label={site.ui.close}>
+      <Icon name="close" size={24} />
+    </button>
+  </div>
+  <div class="lightbox-stage">
+    <button class="icon-button" data-lightbox-prev aria-label={site.ui.previous}>
+      <Icon name="back" size={25} />
+    </button>
+    <figure>
+      <img data-lightbox-image alt="" />
+      <figcaption data-lightbox-caption></figcaption>
+    </figure>
+    <button class="icon-button" data-lightbox-next aria-label={site.ui.next}>
+      <Icon name="arrow" size={25} />
+    </button>
+  </div>
+</dialog>
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  if (dialog) {
+    const image = dialog.querySelector<HTMLImageElement>('[data-lightbox-image]')!;
+    const caption = dialog.querySelector<HTMLElement>('[data-lightbox-caption]')!;
+    const counter = dialog.querySelector<HTMLElement>('[data-lightbox-counter]')!;
+    const prev = dialog.querySelector<HTMLButtonElement>('[data-lightbox-prev]')!;
+    const next = dialog.querySelector<HTMLButtonElement>('[data-lightbox-next]')!;
+    let items: HTMLElement[] = [];
+    let index = 0;
+    let trigger: HTMLElement | null = null;
+    function show(at: number) {
+      index = (at + items.length) % items.length;
+      const item = items[index];
+      image.src = item.dataset.src!;
+      image.alt = item.dataset.alt || '';
+      caption.textContent = item.dataset.caption || '';
+      counter.textContent = (dialog!.dataset.counterTemplate || '')
+        .replace('{current}', String(index + 1))
+        .replace('{total}', String(items.length));
+      prev.hidden = next.hidden = items.length < 2;
+    }
+    document.addEventListener('click', (event) => {
+      const target = (event.target as Element).closest<HTMLElement>('[data-gallery-open]');
+      if (!target) return;
+      event.preventDefault();
+      trigger = target;
+      items = [...document.querySelectorAll<HTMLElement>('[data-gallery-open]')].filter(
+        (item) =>
+          item.dataset.galleryGroup === target.dataset.galleryGroup && !item.closest('[hidden]'),
+      );
+      show(items.indexOf(target));
+      dialog.showModal();
+      document.body.classList.add('modal-open');
+    });
+    dialog.querySelector('[data-lightbox-close]')!.addEventListener('click', () => dialog.close());
+    prev.addEventListener('click', () => show(index - 1));
+    next.addEventListener('click', () => show(index + 1));
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        show(index - 1);
+      }
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        show(index + 1);
+      }
+    });
+    dialog.addEventListener('close', () => {
+      document.body.classList.remove('modal-open');
+      trigger?.focus();
+    });
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+  }
+</script>

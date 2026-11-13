@@ -1,0 +1,17 @@
+# Les couleurs acceptent les codes hexadécimaux à 6 chiffres.
+colors:
+  background: '#f8f6ef'
+  surface: '#eeeee4'
+  ink: '#303e33'
+  muted: '#596451'
+  primary: '#435d46'
+  primaryHover: '#304633'
+  accent: '#94654d'
+  line: '#d5d7c9'
+  rose: '#ecdfd8'
+fonts:
+  heading: "'Cormorant Garamond', Georgia, serif"
+  body: "'DM Sans', sans-serif"
+layout:
+  maxWidth: 1240
+  imageRadius: 4

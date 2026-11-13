@@ -1,0 +1,116 @@
+---
+import { render } from 'astro:content';
+import type { Creation } from '../lib/creations';
+import { creations, creationUrl } from '../lib/creations';
+import { site } from '../lib/config';
+import Base from '../layouts/Base.astro';
+import Icon from './Icon.astro';
+import Share from './Share.astro';
+import CreationCard from './CreationCard.astro';
+interface Props {
+  entry: Creation;
+}
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { data } = entry;
+const related = (await creations(entry.collection))
+  .filter((item) => item.id !== entry.id)
+  .slice(0, 2);
+---
+
+<Base title={data.title} description={data.description} image={data.images[0].src}>
+  <div class="container creation-detail">
+    <a class="back-link" href={`/${entry.collection}/`}>
+      <Icon name="back" size={17} />
+      {entry.collection === 'couture' ? site.ui.backCouture : site.ui.backDrawing}
+    </a>
+    <div class="detail-heading">
+      <div>
+        <p class="eyebrow">
+          {data.category}
+          {data.demo && ` · ${site.ui.demoBadge}`}
+        </p>
+        <h1>{data.title}</h1>
+        <p>{data.description}</p>
+      </div>
+      <span class="detail-flower" aria-hidden="true">
+        ✧
+      </span>
+    </div>
+    <div class="detail-layout">
+      <section class="detail-gallery" aria-label={site.ui.creationGallery}>
+        {data.images.map((image, index) => (
+          <figure>
+            <a
+              href={image.src}
+              class="gallery-image"
+              data-gallery-open
+              data-gallery-group="creation"
+              data-src={image.src}
+              data-alt={image.alt}
+              data-caption={image.caption || data.title}
+              aria-label={`${site.ui.enlarge} : ${image.alt}`}
+            >
+              <img
+                src={image.src}
+                alt={image.alt}
+                width={image.width}
+                height={image.height}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                style={{ objectPosition: image.position }}
+              />
+              <span class="image-expand" aria-hidden="true">
+                <Icon name="expand" />
+              </span>
+            </a>
+            {image.caption && <figcaption>{image.caption}</figcaption>}
+          </figure>
+        ))}
+      </section>
+      <aside class="creation-story">
+        <p class="eyebrow">{site.ui.aboutCreation}</p>
+        <div class="prose">
+          <Content />
+        </div>
+        <dl class="creation-facts">
+          <div>
+            <dt>{site.ui.technique}</dt>
+            <dd>{data.technique}</dd>
+          </div>
+          <div>
+            <dt>{site.ui.year}</dt>
+            <dd>{data.date.getFullYear()}</dd>
+          </div>
+          {data.materials.length > 0 && (
+            <div>
+              <dt>{site.ui.materials}</dt>
+              <dd>{data.materials.join(' · ')}</dd>
+            </div>
+          )}
+        </dl>
+        <Share title={data.title} path={creationUrl(entry)} />
+        <div class="creation-contact">
+          <h2>{site.ui.inspired}</h2>
+          <p>{site.ui.inspiredText}</p>
+          <a
+            class="text-link arrow-link"
+            href={`/contact/?creation=${encodeURIComponent(data.title)}`}
+          >
+            {site.ui.contactCreation}
+            <Icon name="arrow" size={18} />
+          </a>
+        </div>
+      </aside>
+    </div>
+    {related.length > 0 && (
+      <section class="related">
+        <h2 class="eyebrow">{site.ui.related}</h2>
+        <div class="related-grid">
+          {related.map((item) => (
+            <CreationCard entry={item} compact />
+          ))}
+        </div>
+      </section>
+    )}
+  </div>
+</Base>

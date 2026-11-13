@@ -1,0 +1,132 @@
+# Tous les textes de l’interface sont ici. Les récits sont dans src/content/.
+name: Myriade Création
+url: https://example.com
+description: 'Un fil, un trait, une touche de magie. Découvrez un univers de couture et d’illustrations inspiré par la nature et les petits enchantements du quotidien.'
+locale: fr_CH
+language: fr
+demoMode: true
+demoNotice: 'Un aperçu de l’univers Myriade — créations et visuels de démonstration.'
+logo:
+  src: ''
+  alt: Myriade Création, couture et illustration
+  tagline: Couture & illustration
+socials: []
+# Exemple : - { label: Instagram, url: "https://www.instagram.com/votre-compte/" }
+navigation:
+  - { label: Accueil, href: / }
+  - { label: Couture, href: /couture/ }
+  - { label: Dessin, href: /dessin/ }
+  - { label: 'L’atelier', href: /atelier/ }
+contact:
+  email: ''
+  navLabel: Parlons de votre idée
+  eyebrow: Une idée à faire éclore ?
+  title: Et si nous créions un peu de magie ensemble ?
+  description: 'Une envie de couture, une illustration imaginée pour vous, ou simplement quelques mots… Je serais ravie de découvrir votre projet.'
+  button: Écrivez-moi
+  pageTitle: Une jolie histoire commence par quelques mots.
+  pageIntro: 'Racontez-moi votre envie, vos inspirations et les petits détails qui comptent pour vous.'
+  nameLabel: Votre prénom
+  emailLabel: Votre adresse e-mail
+  subjectLabel: Votre envie
+  messageLabel: Votre message
+  namePlaceholder: Comment vous appelez-vous ?
+  emailPlaceholder: vous@exemple.ch
+  messagePlaceholder: 'Une idée, une couleur, une occasion particulière…'
+  subjects: [Une création couture, Une illustration, Un autre petit mot]
+  submit: Préparer mon e-mail
+  copy: Copier mon message
+  copied: Votre message a été copié.
+  copyError: La copie est indisponible. Vous pouvez sélectionner le texte du récapitulatif.
+  prepared: Votre e-mail est prêt dans votre messagerie. Vous pourrez le relire avant de l’envoyer.
+  unavailable: 'Les échanges ouvriront bientôt. Vous pouvez déjà préparer et copier votre message.'
+  notice: 'Ce formulaire ouvre votre application e-mail. Votre message n’est pas envoyé automatiquement et aucune donnée n’est enregistrée sur ce site.'
+  draftTitle: Votre message
+  noScript: Activez JavaScript pour préparer un message, ou utilisez directement l’adresse e-mail affichée lorsqu’elle sera disponible.
+  mailSubjectPrefix: Un petit mot pour Myriade Création
+  mailGreeting: Bonjour,
+  mailName: Prénom
+  mailEmail: Adresse de réponse
+  mailProject: Mon envie
+  mailCreation: Création qui m’inspire
+home:
+  eyebrow: Un atelier, mille petits enchantements
+  title: Un fil, un trait,
+  titleAccent: un peu de magie.
+  description: 'Des étoffes qui racontent des histoires, des dessins qui invitent à rêver. Bienvenue dans un univers où les idées prennent vie, tout en douceur.'
+  primary: Explorer les créations
+  secondary: Entrer dans l’atelier
+  image: /images/demo/atelier.webp
+  imageAlt: 'Un atelier de couture baigné de lumière, avec lin, fils et carnet botanique. Image de démonstration.'
+  imageCaption: Là où les idées prennent vie.
+  imageStamp: Imaginé avec douceur
+  ribbon: [Des idées cousues de fil et de rêve, La nature comme muse, De petits mondes à partager]
+  selectionEyebrow: Au fil de l’inspiration
+  selectionTitle: Les échappées créatives
+  selectionText: 'Un peu de tissu, quelques couleurs et beaucoup d’imagination. Chaque pièce ouvre la porte d’une nouvelle histoire.'
+  allCreations: Toutes les créations
+  allCouture: Découvrir la couture
+  allDrawing: Explorer les dessins
+  atelierEyebrow: Derrière les créations
+  atelierTitle: Des mains qui créent,
+  atelierAccent: une imagination qui vagabonde.
+  atelierText: 'Entre une boîte de fils et un carnet de croquis, l’atelier est un petit refuge. On y suit une intuition, on essaie, on recommence… et une idée devient une création.'
+  atelierImage: /images/demo/herbier.webp
+  atelierImageAlt: 'Papillon vert et fleurs sauvages, illustration de démonstration.'
+  atelierLink: L’histoire de l’atelier
+  drawingEyebrow: Le carnet s’ouvre
+  drawingTitle: Petits fragments d’imaginaire
+  drawingText: 'Des feuilles, des ailes, des mondes minuscules. Une promenade en images, au gré des traits et des couleurs.'
+collections:
+  couture:
+    eyebrow: Du rêve à l’étoffe
+    title: Les histoires cousues
+    description: 'Des matières à toucher, des détails à découvrir. Parcourez les créations et entrez dans les coulisses de leur confection.'
+  dessin:
+    eyebrow: Du trait à l’imaginaire
+    title: Le jardin des dessins
+    description: 'Un herbier de petits mondes, entre nature et rêverie. Ouvrez une image pour en découvrir les détails et son histoire.'
+ui:
+  menu: Menu
+  skip: Aller au contenu
+  home: Accueil
+  close: Fermer
+  filterAll: Tout découvrir
+  filters: Filtrer les créations
+  results: 'création(s) à découvrir'
+  empty: Aucune création dans ce petit coin de l’atelier, pour le moment.
+  viewCreation: Découvrir la création
+  demoBadge: Exemple
+  creationGallery: Les images de la création
+  enlarge: Agrandir l’image
+  previous: Image précédente
+  next: Image suivante
+  imageCounter: '{current} / {total}'
+  share: Partager cette création
+  copyLink: Copier le lien
+  linkCopied: Le lien a été copié.
+  shareError: La copie est indisponible. Copiez l’adresse ci-dessous.
+  shareUrl: Lien de la création
+  aboutCreation: Le carnet de création
+  materials: Matières & outils
+  year: Année
+  technique: Technique
+  backCouture: Retour aux créations couture
+  backDrawing: Retour à la galerie de dessins
+  inspired: Cette création vous inspire ?
+  inspiredText: Parlons de votre idée et imaginons la suite ensemble.
+  contactCreation: Échanger autour de cette création
+  related: D’autres petits enchantements
+  optional: facultatif
+  required: obligatoire
+footer:
+  text: Un fil de poésie dans le quotidien.
+  copyright: Myriade Création. Tous droits réservés.
+  legal: Mentions légales
+  privacy: Confidentialité
+  backTop: Retour en haut
+notFound:
+  eyebrow: Une petite échappée
+  title: Ce sentier s’est égaré.
+  text: La page que vous cherchez a peut-être changé de place. Retrouvons le chemin de l’atelier.
+  button: Revenir à l’accueil

@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../lib/config';
+import Icon from '../components/Icon.astro';
+---
+
+<Base title={site.notFound.title} noindex>
+  <section class="not-found container">
+    <p class="eyebrow">{site.notFound.eyebrow}</p>
+    <h1>{site.notFound.title}</h1>
+    <p>{site.notFound.text}</p>
+    <a href="/" class="button">
+      {site.notFound.button}
+      <Icon name="arrow" size={18} />
+    </a>
+  </section>
+</Base>
